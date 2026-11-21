@@ -6,6 +6,7 @@ const MAX_TODOS = 100
 function App() {
   const [todos, setTodos, clearTodos] = useLocalStorage('todos', [])
   const [text, setText] = useState('')
+  const [dueDate, setDueDate] = useState('')
 
   const isFull = todos.length >= MAX_TODOS
 
@@ -13,8 +14,9 @@ function App() {
     e.preventDefault()
     const trimmed = text.trim()
     if (!trimmed || isFull) return
-    setTodos([...todos, { id: crypto.randomUUID(), text: trimmed, done: false }])
+    setTodos([...todos, { id: crypto.randomUUID(), text: trimmed, done: false, dueDate }])
     setText('')
+    setDueDate('')
   }
 
   const toggleTodo = (id) =>
@@ -44,6 +46,14 @@ function App() {
           disabled={isFull}
           className="flex-1 rounded-md border border-gray-300 px-3 py-2 disabled:bg-gray-100"
         />
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          aria-label="期限日"
+          disabled={isFull}
+          className="rounded-md border border-gray-300 px-2 py-2 text-sm disabled:bg-gray-100"
+        />
         <button
           type="submit"
           disabled={isFull}
@@ -71,6 +81,7 @@ function App() {
                 onChange={() => toggleTodo(todo.id)}
               />
               <span>{todo.text}</span>
+              {todo.dueDate && <time className="due">期限: {todo.dueDate}</time>}
             </label>
             <button
               type="button"
