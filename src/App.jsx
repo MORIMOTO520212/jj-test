@@ -3,6 +3,13 @@ import { useLocalStorage } from './hooks/useLocalStorage'
 
 const MAX_TODOS = 100
 
+// ローカルタイムゾーンの今日 (YYYY-MM-DD)。日付文字列は辞書順で比較できる
+const today = () => {
+  const d = new Date()
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+
 function App() {
   const [todos, setTodos, clearTodos] = useLocalStorage('todos', [])
   const [text, setText] = useState('')
@@ -31,6 +38,9 @@ function App() {
   }
 
   const doneCount = todos.length - todos.filter((t) => !t.done).length
+  const todayStr = today()
+  const isOverdue = (t) => !t.done && t.dueDate && t.dueDate < todayStr
+  const overdueCount = todos.filter(isOverdue).length
   const remaining = todos.filter((t) => !t.done).length
 
   return (
@@ -72,7 +82,9 @@ function App() {
         {todos.map((todo) => (
           <li
             key={todo.id}
-            className={`${todo.done ? 'done text-gray-400 line-through' : ''} flex items-center justify-between border-b border-gray-200 py-2`}
+            className={`${[todo.done && 'done text-gray-400 line-through', isOverdue(todo) && 'overdue']
+              .filter(Boolean)
+              .join(' ')} flex items-center justify-between border-b border-gray-200 py-2`}
           >
             <label className="flex flex-1 cursor-pointer items-center gap-2">
               <input
@@ -96,7 +108,10 @@ function App() {
       </ul>
 
       <footer className="footer flex items-center justify-between">
-        <p className="count text-sm text-gray-500">残り {remaining} 件</p>
+        <p className="count text-sm text-gray-500">
+          残り {remaining} 件
+          {overdueCount > 0 && `(期限切れ ${overdueCount} 件)`}
+        </p>
         <div className="actions flex gap-2">
           <button type="button" onClick={clearDone} disabled={doneCount === 0}>
             完了済みを削除
