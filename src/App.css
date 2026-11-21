@@ -96,3 +96,26 @@
   color: #d33;
   font-size: 13px;
 }
+
+.add-form input[type='date'] {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.due {
+  margin-left: auto;
+  padding-right: 8px;
+  color: #666;
+  font-size: 12px;
+}
+
+.todo-list li.overdue .due {
+  color: #d33;
+  font-weight: bold;
+}
+
+.todo-list li.overdue span:first-of-type {
+  color: #d33;
+}
