@@ -1,9 +1,10 @@
 import { useState } from 'react'
+import { useLocalStorage } from './hooks/useLocalStorage'
 
 const MAX_TODOS = 100
 
 function App() {
-  const [todos, setTodos] = useState([])
+  const [todos, setTodos] = useLocalStorage('todos', [])
   const [text, setText] = useState('')
 
   const isFull = todos.length >= MAX_TODOS
