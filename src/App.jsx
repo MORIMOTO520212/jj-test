@@ -4,7 +4,7 @@ import { useLocalStorage } from './hooks/useLocalStorage'
 const MAX_TODOS = 100
 
 function App() {
-  const [todos, setTodos] = useLocalStorage('todos', [])
+  const [todos, setTodos, clearTodos] = useLocalStorage('todos', [])
   const [text, setText] = useState('')
 
   const isFull = todos.length >= MAX_TODOS
@@ -22,6 +22,13 @@ function App() {
 
   const deleteTodo = (id) => setTodos(todos.filter((t) => t.id !== id))
 
+  const clearDone = () => setTodos(todos.filter((t) => !t.done))
+
+  const clearAll = () => {
+    if (window.confirm('すべてのTODOを削除しますか?')) clearTodos()
+  }
+
+  const doneCount = todos.length - todos.filter((t) => !t.done).length
   const remaining = todos.filter((t) => !t.done).length
 
   return (
@@ -77,7 +84,17 @@ function App() {
         ))}
       </ul>
 
-      <p className="count text-sm text-gray-500">残り {remaining} 件</p>
+      <footer className="footer flex items-center justify-between">
+        <p className="count text-sm text-gray-500">残り {remaining} 件</p>
+        <div className="actions flex gap-2">
+          <button type="button" onClick={clearDone} disabled={doneCount === 0}>
+            完了済みを削除
+          </button>
+          <button type="button" onClick={clearAll} disabled={todos.length === 0}>
+            全削除
+          </button>
+        </div>
+      </footer>
     </main>
   )
 }
